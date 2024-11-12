@@ -27,6 +27,22 @@ def add_book():
         return redirect(url_for('index'))
     return render_template('add_book.html')
 
+@app.route('/books/edit/<int:book_id>', methods=['GET', 'POST'])
+def edit_book(book_id):
+    book = next((b for b in library if b['id'] == book_id), None)
+    if not book:
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        book['title'] = request.form['title']
+        book['author'] = request.form['author']
+        book['year'] = request.form['year']
+        book['category'] = request.form['category']
+        return redirect(url_for('book_details', book_id=book['id']))
+    
+    return render_template('edit_book.html', book=book)
+
+
 @app.route('/books/<int:book_id>', methods=['GET'])
 def book_details(book_id):
     book = next((b for b in library if b['id'] == book_id), None)
